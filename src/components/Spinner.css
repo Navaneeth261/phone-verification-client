@@ -1,0 +1,22 @@
+.spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .spinner {
+    border: 0.25em solid rgba(0, 0, 0, 0.1);
+    border-left-color: #7986cb; /* Change color to match your design */
+    border-radius: 50%;
+    width: 3em; /* Increase the size of the spinner */
+    height: 3em; /* Increase the size of the spinner */
+    animation: spinner 0.7s linear infinite;
+  }
+  
+  @keyframes spinner {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  

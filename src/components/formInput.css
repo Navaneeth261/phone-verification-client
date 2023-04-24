@@ -1,0 +1,32 @@
+.formInput {
+    display: flex;
+    flex-direction: column;
+    width: 280px;
+}
+
+.input-element {
+    padding: 10px;
+    margin: 10px 0px;
+    border-radius: 5px;
+    border: 1px solid gray;
+}
+.phoneContainter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+label{
+    font-size: 12px;
+    color: gray;
+}
+
+.form-error{
+    font-size: 12px;
+    padding: 3px;
+    color: red;
+}
+
+.invalid-input {
+    border: 1px solid red;
+}
