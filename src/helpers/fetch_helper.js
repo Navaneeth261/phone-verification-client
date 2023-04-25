@@ -25,18 +25,23 @@ const fetchApi = async (
 
   return fetch(requestUrl, fetchOptions)
     .then((response) => {
-      if (!response.ok) {
+      if (response.ok) {
         return response.json();
-      }
-      return response.json();
+      } else {
+        if (window.location.pathname !== "/login" && window.location.pathname !== "/register") {
+          window.location.pathname='/login';
+        }
+        return response.json();
+      }   
     })
     .catch((error) => {
       if (error.status === 401) {
+        console.log("B")
         if (window.location.pathname !== "/login") {
           window.location.reload("/login");
         }
       }
-      throw error;
+      //throw error;
     });
 };
 
