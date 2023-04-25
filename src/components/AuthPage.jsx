@@ -1,20 +1,19 @@
 import "./authPage.css";
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { post } from "../helpers/api_helper";
+import { post } from "../helpers/fetch_helper";
 import FormInput from "./FormInput";
 import { AppContext } from "../App";
 import ToastMessage from "./toast";
- 
+
 const AuthPage = (props) => {
+  const { inputs, intialState, apiData, toggle, formName } = props;
 
-const {inputs, intialState, apiData, toggle, formName } = props;
-
-  const { setUserDetails } = useContext(AppContext);
+  const { setUserDetails, setAppStatus } = useContext(AppContext);
   const navigate = useNavigate();
 
   const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
+  const [toastMessage, setToastMessage] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
   const [values, setValues] = useState(intialState.values);
@@ -22,8 +21,10 @@ const {inputs, intialState, apiData, toggle, formName } = props;
   const [focused, setFocused] = useState(intialState.focused);
   const [isDisabled, setIsDisabled] = useState(intialState.isDisabled);
   const [isDisplay, setIsDisplay] = useState(intialState.isDisplay);
-  const [selectValue, setSelectValue] = useState("+91")
-  const [submitBtnName, setSubmitBtnName] = useState(intialState.sendVerificationCodeBtnName);
+  const [selectValue, setSelectValue] = useState("+91");
+  const [submitBtnName, setSubmitBtnName] = useState(
+    intialState.sendVerificationCodeBtnName
+  );
 
   const ShowToastMessage = (message) => {
     setToastMessage(message);
@@ -36,7 +37,7 @@ const {inputs, intialState, apiData, toggle, formName } = props;
     setIsDisplay(intialState.isDisplay);
     setSubmitBtnName(intialState.sendVerificationCodeBtnName);
   };
-  
+
   const sendVerificationCode = async () => {
     setIsLoading(true);
     const response = await post(apiData.sendVerificationCodeAPI, {
@@ -44,9 +45,8 @@ const {inputs, intialState, apiData, toggle, formName } = props;
       phoneNumber: values.phoneNumber,
     });
     setIsLoading(false);
-    ShowToastMessage(response?.message)
+    ShowToastMessage(response?.message);
     if (response.status) {
-
       setIsDisabled((prevState) => ({
         ...prevState,
         phoneNumber: true,
@@ -69,26 +69,11 @@ const {inputs, intialState, apiData, toggle, formName } = props;
       ...values,
     });
     setIsLoading(false);
-    ShowToastMessage(response?.message)
+    ShowToastMessage(response?.message);
     if (response.status) {
-      const token = response.token;
-      const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // set expiration to 7 days
-      const cookieOptions = {
-        expires: expires,
-        //secure: true, // set cookie as secure
-        //httpOnly: true, // set cookie as httpOnly
-        //sameSite: 'lax' // set cookie to be sent with cross-site requests with safe HTTP methods
-      };
-      document.cookie = `token=${token}; ${Object.entries(cookieOptions)
-        .map(([k, v]) => `${k}=${v}`)
-        .join("; ")}; path=/`;
-      setUserDetails({
-        ...response.data,
-        isLoading: false,
-        isLoggedIn: true,
-      });
+      setUserDetails(response.data);
+      setAppStatus({ isLoading: false, isLoggedIn: true });
       navigate("/");
-    } else {
     }
   };
 
@@ -112,8 +97,8 @@ const {inputs, intialState, apiData, toggle, formName } = props;
   };
 
   const handleOnChange = (e) => {
-    if(e.target.name ==="countrySelect") {
-      setSelectValue(e.target.value)
+    if (e.target.name === "countrySelect") {
+      setSelectValue(e.target.value);
     } else {
       setValues({ ...values, [e.target.name]: e.target.value });
       const input = inputs.find((item) => item.name === e.target.name);
@@ -125,7 +110,6 @@ const {inputs, intialState, apiData, toggle, formName } = props;
         true
       );
     }
-   
   };
 
   const handleOnBlur = (e) => {
@@ -151,7 +135,9 @@ const {inputs, intialState, apiData, toggle, formName } = props;
 
   return (
     <div className="container">
-      {showToast && toastMessage?.length > 0 && <ToastMessage message={toastMessage} />}
+      {showToast && toastMessage?.length > 0 && (
+        <ToastMessage message={toastMessage} />
+      )}
       <form onSubmit={handleSubmit}>
         <h1>{formName}</h1>
         {inputs.map((input) => (
@@ -173,18 +159,22 @@ const {inputs, intialState, apiData, toggle, formName } = props;
             <button
               className="retry-button"
               type="button"
-              onClick={()=>{changePhoneNumber()
-                setFocused((prev) => ({...prev, phoneNumber: false }));
-                setValues((prev) => ({...prev, phoneNumber: "" }));}}
+              onClick={() => {
+                changePhoneNumber();
+                setFocused((prev) => ({ ...prev, phoneNumber: false }));
+                setValues((prev) => ({ ...prev, phoneNumber: "" }));
+              }}
             >
               Change Phone
             </button>
             <button
               className="retry-button"
               type="button"
-              onClick={()=>{sendVerificationCode();
-                setFocused((prev) => ({...prev, verificationCode: false }));
-                setValues((prev) => ({...prev, verificationCode: "" }));}}
+              onClick={() => {
+                sendVerificationCode();
+                setFocused((prev) => ({ ...prev, verificationCode: false }));
+                setValues((prev) => ({ ...prev, verificationCode: "" }));
+              }}
             >
               Resend Code
             </button>
@@ -193,7 +183,12 @@ const {inputs, intialState, apiData, toggle, formName } = props;
         <button className="submit-button" type="submit">
           {isLoading ? <div className="spinner-button"></div> : submitBtnName}{" "}
         </button>
-        <button className="toggle-button" onClick={()=>navigate(toggle.route)}>{toggle.text}</button>
+        <button
+          className="toggle-button"
+          onClick={() => navigate(toggle.route)}
+        >
+          {toggle.text}
+        </button>
       </form>
     </div>
   );

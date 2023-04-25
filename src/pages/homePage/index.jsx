@@ -1,12 +1,12 @@
 import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { get } from "../../helpers/api_helper.js";
+import { get } from "../../helpers/fetch_helper.js";
 import { AppContext } from "../../App";
 import "./homePage.css";
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const { userDetails, setUserDetails } = useContext(AppContext);
+  const { setAppStatus, userDetails, setUserDetails } = useContext(AppContext);
 
   const [message, setMessage] = useState([]);
 
@@ -16,14 +16,7 @@ const HomePage = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const token = document.cookie
-        ?.split("; ")
-        .find((row) => row.startsWith("token="))
-        ?.split("=")[1];
-      const config = {
-        Authorization: `Bearer ${token}`,
-      };
-      const response = await get("/api/users/profile", config);
+      const response = await get("/api/users/profile");
       if (response?.status) {
         setMessage(response.message);
       }
@@ -31,18 +24,17 @@ const HomePage = () => {
     fetchUser();
   }, []);
 
-  const handleLogout = () => {
-    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    setUserDetails({
-      isLoggedIn: false,
-    });
+  const handleLogout = async() => {
+    await get("/api/auth/logout");
+    setUserDetails({ userId: "", phoneNumber: "", name: "" });
+    setAppStatus({ isLoading: false, isLoggedIn: false });
     navigate("/login");
   };
 
   const linkData = {
     linkedIn: "https://www.linkedin.com/in/navaneeth261/",
     github_client: "https://github.com/Navaneeth261/phone-verification-client",
-    github_server: "https://github.com/Navaneeth261/phone-verification-server"
+    github_server: "https://github.com/Navaneeth261/phone-verification-server",
   };
 
   const handleOpenLink = (action_type) => {
@@ -66,7 +58,12 @@ const HomePage = () => {
   return (
     <div className="home-container">
       <div className="button-container">
-        <button className="home-button" onClick={()=>{handleOpenLink("linkedin")}}>
+        <button
+          className="home-button"
+          onClick={() => {
+            handleOpenLink("linkedin");
+          }}
+        >
           View Navaneeth's Profile
         </button>
         <button className="home-button" onClick={handleLogout}>
@@ -85,7 +82,12 @@ const HomePage = () => {
           {message?.ui && (
             <h3 className="result-text">
               <span className="name-list"> Frontend Features</span>{" "}
-              <button className="git-button" onClick={()=>{handleOpenLink("client")}}>
+              <button
+                className="git-button"
+                onClick={() => {
+                  handleOpenLink("client");
+                }}
+              >
                 View Source
               </button>
             </h3>
@@ -104,7 +106,12 @@ const HomePage = () => {
           {message?.server && (
             <h3 className="result-text">
               <span className="name-list"> Backend Features</span>
-              <button className="git-button" onClick={()=>{handleOpenLink("server")}}>
+              <button
+                className="git-button"
+                onClick={() => {
+                  handleOpenLink("server");
+                }}
+              >
                 View Source
               </button>
             </h3>
@@ -118,8 +125,6 @@ const HomePage = () => {
             ))}
           </ul>
         </div>
-
-
       </div>
     </div>
   );
