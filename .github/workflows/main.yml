@@ -27,7 +27,7 @@ jobs:
     - name: Build
       run: |
         npm ci --force
-        CI=false npm run build:test
+        CI=false npm run build
         pwd
         ls -al
 
