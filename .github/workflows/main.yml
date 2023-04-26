@@ -1,0 +1,44 @@
+name: Upload to S3 and Create Cloudfront Invalidation
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  deploy-master:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+
+    - name: Create .env file
+      run: |
+        echo "REACT_APP_AWS_API_URL=${{ secrets.REACT_APP_AWS_API_URL }}" >> .env
+
+    - name: Print .env file
+      run: cat .env
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: 18
+    - name: Build
+      run: |
+        npm ci --force
+        CI=false npm run build:test
+        pwd
+        ls -al
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Deploy to S3 and Invalidate Cloudfront
+      run: |
+        aws --region ${{ secrets.AWS_REGION }} s3 sync ./build s3://${{ secrets.AWS_S3_BUCKET_NAME }} --delete
+        aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_CLOUDFRONT_DIST_ID }} --paths "/*"
