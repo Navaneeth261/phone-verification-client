@@ -24,7 +24,8 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 18
-    - name: Build
+        
+    - name: Install dependencies and Build
       run: |
         npm ci --force
         CI=false npm run build
