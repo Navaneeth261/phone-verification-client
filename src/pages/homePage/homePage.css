@@ -31,8 +31,23 @@
 @media (max-width: 700px) {
   .list-container {
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
 }
+
+@media screen and (min-width: 700px) {
+  .mobile-table {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .desktop-table {
+    display: none;
+  }
+}
+
 
 .home-button {
   width: fit-content;
@@ -72,7 +87,8 @@
 }
 
 .name-list {  
-  margin-top: 25px;
+  margin-top: 15px;
+  margin-bottom: 15px;
   color: blue;
 }
 
