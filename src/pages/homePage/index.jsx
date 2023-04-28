@@ -25,7 +25,7 @@ const HomePage = () => {
   }, []);
 
   const handleLogout = async() => {
-    await get("/api/auth/logout");
+    await get("/api/users/logout");
     setUserDetails({ userId: "", phoneNumber: "", name: "" });
     setAppStatus({ isLoading: false, isLoggedIn: false });
     navigate("/login");
