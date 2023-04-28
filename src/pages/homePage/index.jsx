@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { get } from "../../helpers/fetch_helper.js";
 import { AppContext } from "../../App";
 import "./homePage.css";
+import {VerificationTable} from '../../components/VerificationTable.jsx'
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -158,6 +159,13 @@ const HomePage = () => {
           </span>{" "}
         </h3>
       )}
+
+{/* <div style={{ display: "flex", justifyContent: "center", margin: "0 40px" }}>
+      {verificationHistory && Object.keys(verificationHistory).length > 1 && (
+        <VerificationTable data={Object.values(verificationHistory)} />
+      )}
+    </div> */}
+
       <div className="desktop-table">
         <div
           style={{
